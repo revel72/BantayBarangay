@@ -14,8 +14,7 @@ import {
 } from "@/lib/constants";
 import { formatTime, dayKey, shortDay } from "@/lib/format";
 import { updateReportStatus, saveReportNote, deleteReport } from "./actions";
-import AdminNav from "@/components/AdminNav";
-import AutoRefresh from "@/components/AutoRefresh";
+import AdminShell from "@/components/AdminShell";
 import DeleteReportButton from "@/components/DeleteReportButton";
 
 export const metadata = {
@@ -119,10 +118,8 @@ async function Dashboard({ searchParams }) {
   ];
 
   return (
-    <>
-      <AdminNav alertCount={waitingEmergencies} />
-      <AutoRefresh />
-      <main className="admin-page">
+    <AdminShell alertCount={waitingEmergencies} autoRefresh>
+      <>
         <div className="admin-title">
           <h1>Reports dashboard</h1>
           <p className="muted">
@@ -387,7 +384,7 @@ async function Dashboard({ searchParams }) {
             })}
           </ul>
         )}
-      </main>
-    </>
+      </>
+    </AdminShell>
   );
 }

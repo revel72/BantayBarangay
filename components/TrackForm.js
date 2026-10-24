@@ -45,7 +45,7 @@ export default function TrackForm() {
               ⚠️ {errorText}
             </p>
           )}
-          <button className="btn btn-primary btn-big" type="submit" disabled={pending}>
+          <button className={`btn btn-primary btn-big ${pending ? "is-loading" : ""}`} type="submit" disabled={pending}>
             {pending ? t.checking : t.trackButton}
           </button>
         </form>

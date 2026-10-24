@@ -84,23 +84,25 @@ Copy `.env.example` to `.env.local` for your computer. On Vercel, add the same n
 
 ## Put it online (Vercel + Turso, both have free plans)
 
-Vercel cannot keep files between requests, so reports need a hosted database. Turso is a free hosted SQLite.
+Vercel cannot keep files between requests, so reports need a hosted database. Turso is a free hosted SQLite. The app uses your local `local.db` file on your computer and switches to Turso automatically when `TURSO_DATABASE_URL` is set.
 
 1. **Turso database**
-   - Create an account at https://turso.tech and create a database (any name, nearest region).
-   - Copy its **URL** (starts with `libsql://`) and create/copy an **auth token** from the database page.
-   - (The menus change over time. Look for "Create database" and "Generate token".)
+   - Sign up at https://turso.tech and create a database (any name, nearest region).
+   - You need two values: the database **URL** (starts with `libsql://`) and an **auth token**. Both are on the database page in the dashboard.
+   - Command-line alternative (macOS, Linux or WSL on Windows): `turso db create bantaybarangay`, `turso db show bantaybarangay --url`, `turso db tokens create bantaybarangay`.
 2. **GitHub**
-   - Create a GitHub repository and upload this project. `.gitignore` already keeps `node_modules`, `.env.local` and `local.db` out.
+   - Create a repository and upload this project so that `package.json` is at the top level of the repository. `.gitignore` already keeps `node_modules`, `.env.local` and `local.db` out.
 3. **Vercel**
-   - Sign in at https://vercel.com with GitHub, choose **Add New > Project**, and import the repository.
-   - Before deploying, add the environment variables from the table above (at least `ADMIN_USERNAME`, `ADMIN_PASSWORD`, `SESSION_SECRET`, `TURSO_DATABASE_URL`, `TURSO_AUTH_TOKEN`).
+   - Sign in at https://vercel.com with GitHub, choose **Add New > Project** and import the repository. Framework: Next.js (detected automatically).
+   - Open **Environment Variables** and add: `ADMIN_USERNAME`, `ADMIN_PASSWORD`, `SESSION_SECRET`, `TURSO_DATABASE_URL`, `TURSO_AUTH_TOKEN` (see the table above).
    - Click **Deploy**.
 4. **After the first deploy**
-   - Add `NEXT_PUBLIC_SITE_URL` with your real address, then redeploy.
-   - Open `https://your-site/admin`, sign in, then open **QR poster** and print it.
-   - Submit a test report from your phone and check it shows on the dashboard.
+   - Open `https://your-site.vercel.app`, send a test report, then sign in at `/admin` and delete the test.
+   - Open `/admin/qr` **from the live address** and print the poster. It uses the address it was opened from.
+   - Changing an environment variable later needs a **Redeploy** to take effect.
    - The reports table is created automatically on first use.
+
+If something fails: a 500 error or "Admin login is not set up" almost always means a missing or mistyped environment variable. Check **Project > Logs** in Vercel.
 
 ## How the emergency alarm works (and its limits)
 
@@ -171,3 +173,13 @@ scripts/seed.mjs     Demo data (npm run seed)
 - Photo upload
 - Several admin accounts with roles
 - More languages (Cebuano, Ilocano)
+
+
+## Updating an existing deployment (GitHub + Vercel)
+
+1. Copy the new project files over your local clone (keep your `.git` folder). Replace everything, including `package.json` and `package-lock.json` (new packages: `qrcode`, `@fontsource/*`).
+2. Do NOT commit `.env.local` or `local.db` (they are in `.gitignore`).
+3. In the clone: `npm install`, then `npm run build` to check it compiles.
+4. `git add .` -> `git commit -m "Redesign with animated buttons"` -> `git push`. Vercel redeploys automatically.
+5. Vercel > Settings > Environment Variables must contain ADMIN_USERNAME, ADMIN_PASSWORD, SESSION_SECRET, TURSO_DATABASE_URL, TURSO_AUTH_TOKEN. After changing a variable, press Redeploy.
+6. Your existing Turso data is kept. The database upgrades itself on the first request.

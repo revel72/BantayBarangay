@@ -4,7 +4,9 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { usePrefs } from "./Prefs";
 import Logo from "./Logo";
+import EmergencyBanner from "./EmergencyBanner";
 
+// On wide screens this is a fixed side rail; on phones it is a compact top bar.
 export default function SiteHeader() {
   const { t, lang, setLang, size, setSize } = usePrefs();
   const pathname = usePathname();
@@ -16,14 +18,14 @@ export default function SiteHeader() {
   ];
 
   return (
-    <header className="site-header">
+    <header className="rail">
       <a className="skip-link" href="#main">
         {t.skip}
       </a>
 
-      <div className="site-header-inner">
+      <div className="rail-top">
         <Link href="/" className="brand" aria-label={t.siteName}>
-          <Logo size={44} />
+          <Logo size={46} />
           <span className="brand-name">
             Bantay<span>Barangay</span>
           </span>
@@ -56,7 +58,7 @@ export default function SiteHeader() {
         </div>
       </div>
 
-      <nav className="site-nav" aria-label="Main">
+      <nav className="rail-nav" aria-label="Main">
         <Link href="/" aria-current={pathname === "/" ? "page" : undefined}>
           {t.navReport}
         </Link>
@@ -64,6 +66,8 @@ export default function SiteHeader() {
           {t.navTrack}
         </Link>
       </nav>
+
+      <EmergencyBanner />
     </header>
   );
 }

@@ -4,7 +4,7 @@ import { headers } from "next/headers";
 import QRCode from "qrcode";
 import { getSession } from "@/lib/session";
 import { listPendingEmergencies } from "@/lib/db";
-import AdminNav from "@/components/AdminNav";
+import AdminShell from "@/components/AdminShell";
 import PrintButton from "@/components/PrintButton";
 import Logo from "@/components/Logo";
 
@@ -38,14 +38,13 @@ async function Poster() {
     type: "svg",
     errorCorrectionLevel: "Q",
     margin: 1,
-    color: { dark: "#12306b", light: "#ffffff" },
+    color: { dark: "#0a3d2f", light: "#ffffff" },
   });
   const download = `data:image/svg+xml;charset=utf-8,${encodeURIComponent(svg)}`;
 
   return (
-    <>
-      <AdminNav alertCount={waitingEmergencies} />
-      <main className="admin-page">
+    <AdminShell alertCount={waitingEmergencies}>
+      <>
         <div className="admin-title no-print">
           <h1>QR poster</h1>
           <p className="muted">Print this and put it up in the barangay hall, school, clinic or on posts.</p>
@@ -83,7 +82,7 @@ async function Poster() {
           <p className="poster-url">{url}</p>
           <p className="poster-call">In immediate danger? Call 911 first.</p>
         </section>
-      </main>
-    </>
+      </>
+    </AdminShell>
   );
 }

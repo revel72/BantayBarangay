@@ -92,10 +92,13 @@ export default function ReportForm() {
   const visibleTypes = TYPES.filter((ty) => ty.category === category);
 
   return (
-    <form action={formAction} className="card form">
-      <h1>{t.formTitle}</h1>
-      <p className="lead">{t.tagline}</p>
+    <form action={formAction} className="form stepper">
+      <header className="form-head">
+        <h1>{t.heroTitle}</h1>
+        <p className="lead">{t.heroSub}</p>
+      </header>
 
+      <div className="steps">
       <fieldset className="step">
         <legend>
           <span className="step-num" aria-hidden="true">
@@ -247,6 +250,8 @@ export default function ReportForm() {
         </p>
       </fieldset>
 
+      </div>
+
       {/* Honeypot for bots */}
       <div className="hp" aria-hidden="true">
         <label>
@@ -261,7 +266,7 @@ export default function ReportForm() {
         </p>
       )}
 
-      <button className="btn btn-primary btn-big" type="submit" disabled={pending}>
+      <button className={`btn btn-primary btn-big ${pending ? "is-loading" : ""}`} type="submit" disabled={pending}>
         {pending ? t.sending : t.send}
       </button>
       <p className="hint center">🔒 {t.privacy}</p>
