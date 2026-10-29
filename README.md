@@ -80,6 +80,8 @@ Copy `.env.example` to `.env.local` for your computer. On Vercel, add the same n
 | `TURSO_AUTH_TOKEN` | production | Token for the Turso database |
 | `NEXT_PUBLIC_SITE_URL` | recommended | Your final website address, e.g. `https://bantaybarangay.vercel.app`, used for the QR poster |
 | `NEXT_PUBLIC_EMERGENCY_NUMBER` | optional | Emergency number shown on the Call button. Default `911` |
+| `NEXT_PUBLIC_BARANGAY_NUMBER` | optional | Barangay hotline. When set, a second **Call Barangay** button appears (e.g. `0917 123 4567` or `(02) 8123 4567`). Leave empty to hide it |
+| `NEXT_PUBLIC_BARANGAY_NAME` | optional | Name on that button, e.g. `San Roque` gives "Call San Roque" |
 | `REPORT_TIMEZONE` | optional | Time zone for displayed times. Default `Asia/Manila` |
 
 ## Put it online (Vercel + Turso, both have free plans)
@@ -192,3 +194,6 @@ scripts/seed.mjs     Demo data (npm run seed)
 - Needs HTTPS (Vercel provides it; `localhost` also works) and the person must allow the microphone.
 - Only logged-in admins can play clips (`/admin/audio/<id>`). The server checks the file really is audio and rejects clips over 700 KB.
 - The microphone is allowed for this site only (`Permissions-Policy` in `next.config.mjs`).
+
+Note: `NEXT_PUBLIC_*` values are built into the site, so after changing them in Vercel you must **Redeploy**.
+Voice typing (🎤) does not work in Brave, which blocks the speech service; the 🎙 voice message works there.

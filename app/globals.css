@@ -2001,3 +2001,33 @@ textarea:focus {
 .voice-ready audio, .voice-play audio { width: 100%; }
 .voice-actions { display: flex; gap: 0.5rem; flex-wrap: wrap; }
 .voice-play { display: flex; flex-direction: column; gap: 0.3rem; margin: 0.5rem 0; max-width: 28rem; }
+
+/* Call buttons: 911 plus the optional barangay hotline */
+.call-actions { display: flex; gap: 0.5rem; flex: none; }
+.call-btn-brgy {
+  background: var(--orange);
+  color: var(--ink);
+}
+.call-card .call-number { margin: 0; font-size: 0.95rem; font-weight: 700; }
+.call-number a { color: #fff; text-decoration: underline; }
+
+@media (max-width: 979px) {
+  .call-card.has-brgy { flex-wrap: wrap; gap: 0.35rem 0.6rem; padding-top: 0.45rem; }
+  .call-card.has-brgy p:first-child { flex: 1 1 100%; font-size: 0.9rem; }
+  .call-card.has-brgy .call-actions { flex: 1 1 100%; }
+  .call-card.has-brgy .call-btn { flex: 1 1 0; max-width: none; justify-content: center; min-height: 2.7rem; }
+  .call-card.has-brgy .call-number { display: none; }
+  .shell:has(.call-card.has-brgy) .main-col { padding-bottom: 8.5rem; }
+}
+
+@media (min-width: 980px) {
+  .call-actions { flex-direction: column; }
+  .call-card .call-number { text-align: center; }
+}
+
+/* Two call buttons: side by side when they fit, stacked when text is large or the screen is narrow */
+@media (max-width: 979px) {
+  .call-card.has-brgy .call-actions { flex-wrap: wrap; }
+  .call-card.has-brgy .call-btn { flex: 1 1 9rem; min-width: 0; text-align: center; }
+  .shell:has(.call-card.has-brgy) .main-col { padding-bottom: 12rem; }
+}
