@@ -183,3 +183,12 @@ scripts/seed.mjs     Demo data (npm run seed)
 4. `git add .` -> `git commit -m "Redesign with animated buttons"` -> `git push`. Vercel redeploys automatically.
 5. Vercel > Settings > Environment Variables must contain ADMIN_USERNAME, ADMIN_PASSWORD, SESSION_SECRET, TURSO_DATABASE_URL, TURSO_AUTH_TOKEN. After changing a variable, press Redeploy.
 6. Your existing Turso data is kept. The database upgrades itself on the first request.
+
+
+## Voice features
+
+- **Speak instead of typing (dictation):** the 🎤 button fills the "What is happening?" box from speech, in English or Filipino. It uses the browser's built-in speech recognition, so it only shows in browsers that support it (Chrome, Edge, Android, recent Safari). Check the text before sending.
+- **Voice message:** the 🎙 button records up to 30 seconds. A person can send a voice message with no written text. Admins see a play button on the report. Clips are stored in the `report_audio` table of the same database (about 100 KB each) and are deleted together with the report.
+- Needs HTTPS (Vercel provides it; `localhost` also works) and the person must allow the microphone.
+- Only logged-in admins can play clips (`/admin/audio/<id>`). The server checks the file really is audio and rejects clips over 700 KB.
+- The microphone is allowed for this site only (`Permissions-Policy` in `next.config.mjs`).

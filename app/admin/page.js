@@ -318,6 +318,12 @@ async function Dashboard({ searchParams }) {
                     )}
                   </p>
                   <p className="description">{r.description}</p>
+                  {Number(r.has_audio) === 1 && (
+                    <div className="voice-play">
+                      <b>🎙 Voice message{r.audio_seconds ? ` (${r.audio_seconds}s)` : ""}</b>
+                      <audio controls preload="none" src={`/admin/audio/${r.id}`} />
+                    </div>
+                  )}
                   {(r.reporter_name || r.contact) && (
                     <p className="muted">
                       <b>Reporter:</b> {r.reporter_name || "Anonymous"}

@@ -7,7 +7,31 @@ import { TYPES, CATEGORIES } from "@/lib/constants";
 import { formatTime } from "@/lib/format";
 
 const MAX_REPORTS_PER_10_MIN = 5;
+const MAX_AUDIO_BYTES = 700 * 1024;
 const COORDS_RE = /^-?\d{1,3}(\.\d+)?,\s?-?\d{1,3}(\.\d+)?$/;
+
+// Only accept real audio: check the file's own header instead of trusting the browser's label.
+function sniffAudio(b) {
+  const at = (i, str) => str.split("").every((ch, k) => b[i + k] === ch.charCodeAt(0));
+  if (b.length < 16) return null;
+  if (b[0] === 0x1a && b[1] === 0x45 && b[2] === 0xdf && b[3] === 0xa3) return "audio/webm";
+  if (at(4, "ftyp")) return "audio/mp4";
+  if (at(0, "OggS")) return "audio/ogg";
+  if (at(0, "RIFF") && at(8, "WAVE")) return "audio/wav";
+  if (at(0, "ID3") || (b[0] === 0xff && (b[1] & 0xe0) === 0xe0)) return "audio/mpeg";
+  return null;
+}
+
+async function readVoice(formData) {
+  const f = formData.get("voice");
+  if (!f || typeof f === "string" || !f.size) return { audio: null };
+  if (f.size > MAX_AUDIO_BYTES) return { error: "audiotoolong" };
+  const bytes = new Uint8Array(await f.arrayBuffer());
+  const mime = sniffAudio(bytes);
+  if (!mime) return { error: "audiobad" };
+  const seconds = Math.max(0, Math.min(60, parseInt(String(formData.get("voiceSeconds") || "0"), 10) || 0));
+  return { audio: { mime, bytes, seconds } };
+}
 
 async function ipHash() {
   const h = await headers();
@@ -41,7 +65,10 @@ export async function submitReport(prevState, formData) {
   if (!typeInfo) return { ok: false, code: "type" };
   const type = typeInfo.label;
   if (location.length < 3) return { ok: false, code: "location" };
-  if (description.length < 5) return { ok: false, code: "description" };
+  const voice = await readVoice(formData);
+  if (voice.error) return { ok: false, code: voice.error };
+  // A voice message can replace the written description.
+  if (description.length < 5 && !voice.audio) return { ok: false, code: "description" };
   if (
     location.length > 300 ||
     description.length > 3000 ||
@@ -62,10 +89,11 @@ export async function submitReport(prevState, formData) {
       category: categoryId,
       location,
       coords,
-      description,
+      description: description.length >= 5 ? description : "(Voice message only)",
       reporterName,
       contact,
       ipHash: hash,
+      audio: voice.audio,
     });
     return { ok: true, ref, category: categoryId };
   } catch (err) {

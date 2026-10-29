@@ -1,10 +1,12 @@
 "use client";
 
-import { useActionState, useState } from "react";
+import { useActionState, useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { submitReport } from "@/app/actions";
 import { TYPES, CATEGORIES } from "@/lib/constants";
 import { usePrefs } from "./Prefs";
+import DictateButton from "./DictateButton";
+import VoiceRecorder from "./VoiceRecorder";
 
 export default function ReportForm() {
   const { t, lang } = usePrefs();
@@ -19,6 +21,23 @@ export default function ReportForm() {
   const [contact, setContact] = useState("");
   const [geo, setGeo] = useState({ status: "idle" }); // idle | busy | ok | fail | nosupport
   const [copied, setCopied] = useState(false);
+  const [clip, setClip] = useState(null); // { blob, seconds, url }
+
+  // The recorded clip travels in a hidden file input, so the form still submits normally.
+  // React empties form fields after a send, so put the clip back if the send failed.
+  const voiceInput = useRef(null);
+  useEffect(() => {
+    const input = voiceInput.current;
+    if (!input) return;
+    try {
+      const dt = new DataTransfer();
+      if (clip) {
+        const ext = clip.blob.type.includes("mp4") ? "m4a" : clip.blob.type.includes("ogg") ? "ogg" : "webm";
+        dt.items.add(new File([clip.blob], `voice.${ext}`, { type: clip.blob.type }));
+      }
+      input.files = dt.files;
+    } catch {}
+  }, [clip, state]);
 
   function chooseCategory(id) {
     setCategory(id);
@@ -205,7 +224,7 @@ export default function ReportForm() {
         <textarea
           id="description"
           name="description"
-          required
+          required={!clip}
           rows={5}
           maxLength={3000}
           aria-describedby="desc-help"
@@ -213,6 +232,10 @@ export default function ReportForm() {
           onChange={(e) => setDescription(e.target.value)}
           placeholder={t.descPlaceholder}
         />
+        <DictateButton value={description} onChange={setDescription} maxLength={3000} />
+        <VoiceRecorder clip={clip} onChange={setClip} />
+        <input ref={voiceInput} type="file" name="voice" accept="audio/*" hidden tabIndex={-1} aria-hidden="true" />
+        <input type="hidden" name="voiceSeconds" value={clip ? clip.seconds : ""} />
       </div>
 
       <fieldset className="step">
