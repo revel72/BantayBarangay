@@ -19,7 +19,7 @@ export default function ReportForm() {
   const [description, setDescription] = useState("");
   const [name, setName] = useState("");
   const [contact, setContact] = useState("");
-  const [geo, setGeo] = useState({ status: "idle" }); // idle | busy | ok | fail | nosupport
+  const [geo, setGeo] = useState({ status: "idle" }); // idle | busy | ok | fail | denied | nosupport
   const [copied, setCopied] = useState(false);
   const [clip, setClip] = useState(null); // { blob, seconds, url }
 
@@ -51,15 +51,25 @@ export default function ReportForm() {
       return;
     }
     setGeo({ status: "busy" });
+    const done = (pos) => {
+      const c = `${pos.coords.latitude.toFixed(6)},${pos.coords.longitude.toFixed(6)}`;
+      setCoords(c);
+      setLocation((prev) => (prev.trim() ? prev : `GPS: ${c}`));
+      setGeo({ status: "ok" });
+    };
     navigator.geolocation.getCurrentPosition(
-      (pos) => {
-        const c = `${pos.coords.latitude.toFixed(6)},${pos.coords.longitude.toFixed(6)}`;
-        setCoords(c);
-        setLocation((prev) => (prev.trim() ? prev : `GPS: ${c}`));
-        setGeo({ status: "ok" });
+      done,
+      (err) => {
+        // 1 = the person (or the phone's settings) blocked location for this site. Retrying will not help.
+        if (err && err.code === 1) return setGeo({ status: "denied" });
+        // Timeout / no GPS fix (common indoors and in Safari): try once more with the coarser network location.
+        navigator.geolocation.getCurrentPosition(
+          done,
+          (err2) => setGeo({ status: err2 && err2.code === 1 ? "denied" : "fail" }),
+          { enableHighAccuracy: false, timeout: 15000, maximumAge: 300000 }
+        );
       },
-      () => setGeo({ status: "fail" }),
-      { enableHighAccuracy: true, timeout: 10000, maximumAge: 30000 }
+      { enableHighAccuracy: true, timeout: 8000, maximumAge: 30000 }
     );
   }
 
@@ -105,6 +115,7 @@ export default function ReportForm() {
     busy: t.locating,
     ok: t.locationOk,
     fail: t.locationFail,
+    denied: t.locationDenied,
     nosupport: t.locationNoSupport,
   }[geo.status];
 

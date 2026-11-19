@@ -1,6 +1,6 @@
-import "@fontsource-variable/bricolage-grotesque";
-import "@fontsource/atkinson-hyperlegible/400.css";
-import "@fontsource/atkinson-hyperlegible/700.css";
+import "@fontsource-variable/roboto";
+import "@fontsource/carlito/400.css";
+import "@fontsource/carlito/700.css";
 import "./globals.css";
 import { PrefsProvider } from "@/components/Prefs";
 

@@ -10,14 +10,22 @@
     "check-db": "node --env-file-if-exists=.env.local scripts/check-db.mjs"
   },
   "dependencies": {
-    "@fontsource-variable/bricolage-grotesque": "^5.3.0",
-    "@fontsource/atkinson-hyperlegible": "^5.3.0",
+    "@fontsource-variable/roboto": "^5.3.0",
+    "@fontsource/carlito": "^5.3.0",
     "@libsql/client": "^0.18.0",
-    "next": "16.4.2",
+    "next": "^16.4.6",
     "qrcode": "^1.5.4",
     "react": "19.3.0",
     "react-dom": "19.3.0"
   },
   "type": "module",
-  "description": "BantayBarangay: QR-code emergency reporting website for a barangay, with an admin dashboard."
+  "description": "BantayBarangay: QR-code emergency reporting website for a barangay, with an admin dashboard.",
+  "browserslist": [
+    "chrome >= 88",
+    "edge >= 88",
+    "firefox >= 78",
+    "safari >= 14",
+    "ios_saf >= 14",
+    "samsung >= 15"
+  ]
 }

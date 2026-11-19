@@ -80,7 +80,8 @@ Copy `.env.example` to `.env.local` for your computer. On Vercel, add the same n
 | `TURSO_AUTH_TOKEN` | production | Token for the Turso database |
 | `NEXT_PUBLIC_SITE_URL` | recommended | Your final website address, e.g. `https://bantaybarangay.vercel.app`, used for the QR poster |
 | `NEXT_PUBLIC_EMERGENCY_NUMBER` | optional | Emergency number shown on the Call button. Default `911` |
-| `NEXT_PUBLIC_BARANGAY_NUMBER` | optional | Barangay hotline. When set, a second **Call Barangay** button appears (e.g. `0917 123 4567` or `(02) 8123 4567`). Leave empty to hide it |
+| `NEXT_PUBLIC_BARANGAY_NUMBER` | optional | Barangay hotline on the main **Call the Barangay** button. Default `046 230 9641`. If you type only the 7 local digits (`2309641`) the area code below is added |
+| `NEXT_PUBLIC_AREA_CODE` | optional | Area code for 7-digit numbers. Default `046` (Cavite) |
 | `NEXT_PUBLIC_BARANGAY_NAME` | optional | Name on that button, e.g. `San Roque` gives "Call San Roque" |
 | `REPORT_TIMEZONE` | optional | Time zone for displayed times. Default `Asia/Manila` |
 
@@ -197,3 +198,10 @@ scripts/seed.mjs     Demo data (npm run seed)
 
 Note: `NEXT_PUBLIC_*` values are built into the site, so after changing them in Vercel you must **Redeploy**.
 Voice typing (🎤) does not work in Brave, which blocks the speech service; the 🎙 voice message works there.
+
+
+## Fonts and browser support
+
+- **Fonts:** Calibri for text and Roboto for headings and buttons. Calibri is a Microsoft font and is not on phones or Linux, so those devices load **Carlito** (a free font with the same letter widths). Roboto and Carlito are bundled with the site (`@fontsource`), so nothing is loaded from Google and the look is the same in every browser. If the fonts are slow to load, text shows immediately in a normal font and swaps in.
+- **Phone numbers** are dialled in international form (`+63 46 230 9641`), so the call button works from any phone, inside or outside Cavite.
+- **Browsers:** the `browserslist` entry in `package.json` targets Chrome/Edge 88+, Firefox 78+, Safari/iPhone 14+, Samsung Internet 15+. The CSS is converted for those versions automatically when you build.

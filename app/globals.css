@@ -25,8 +25,10 @@
   --line: #c6d4cb;
   --radius: 16px;
 
-  --font-body: "Atkinson Hyperlegible", system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
-  --font-display: "Bricolage Grotesque Variable", "Atkinson Hyperlegible", system-ui, sans-serif;
+  /* Body: Calibri. Devices without it (Android, iPhone, Linux, most Macs) get Carlito, a free font with identical letter widths. */
+  --font-body: Calibri, Carlito, "Segoe UI", -apple-system, BlinkMacSystemFont, "Helvetica Neue", Arial, sans-serif;
+  /* Headings and buttons: Roboto, self-hosted so it looks the same in every browser. */
+  --font-display: "Roboto Variable", Roboto, "Segoe UI", -apple-system, BlinkMacSystemFont, "Helvetica Neue", Arial, sans-serif;
 
   /* Overshooting curve: gives buttons a springy "tween" when they lift and settle. */
   --spring: cubic-bezier(0.34, 1.56, 0.64, 1);
@@ -40,6 +42,8 @@
 
 html {
   -webkit-text-size-adjust: 100%;
+  -moz-text-size-adjust: 100%;
+  text-size-adjust: 100%;
 }
 
 body {
@@ -47,16 +51,19 @@ body {
   background: var(--field);
   color: var(--ink);
   font-family: var(--font-body);
-  font-size: 1.125rem;
+  /* Calibri is a small-looking font, so the base size is a little larger to stay easy to read. */
+  font-size: 1.2rem;
   line-height: 1.55;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
 h1,
 h2,
 h3 {
   font-family: var(--font-display);
-  font-weight: 750;
-  letter-spacing: -0.02em;
+  font-weight: 800;
+  letter-spacing: -0.015em;
   line-height: 1.1;
   margin: 0 0 0.5rem;
   color: var(--ink);
@@ -581,7 +588,7 @@ a {
   gap: 0.65rem;
   font-family: var(--font-display);
   font-size: 1.4rem;
-  font-weight: 750;
+  font-weight: 800;
   letter-spacing: -0.015em;
   line-height: 1.15;
   color: var(--ink);
@@ -1319,7 +1326,7 @@ textarea:focus {
 
 .chart figcaption {
   font-family: var(--font-display);
-  font-weight: 750;
+  font-weight: 800;
   font-size: 1.1rem;
   margin-bottom: 0.75rem;
 }
@@ -1528,7 +1535,7 @@ textarea:focus {
 
 .report-type {
   font-family: var(--font-display);
-  font-weight: 750;
+  font-weight: 800;
   font-size: 1.3rem;
   margin-right: 0.6rem;
 }
@@ -2004,7 +2011,7 @@ textarea:focus {
 
 /* Call buttons: 911 plus the optional barangay hotline */
 .call-actions { display: flex; gap: 0.5rem; flex: none; }
-.call-btn-brgy {
+.call-btn-alt {
   background: var(--orange);
   color: var(--ink);
 }
@@ -2017,7 +2024,6 @@ textarea:focus {
   .call-card.has-brgy .call-actions { flex: 1 1 100%; }
   .call-card.has-brgy .call-btn { flex: 1 1 0; max-width: none; justify-content: center; min-height: 2.7rem; }
   .call-card.has-brgy .call-number { display: none; }
-  .shell:has(.call-card.has-brgy) .main-col { padding-bottom: 8.5rem; }
 }
 
 @media (min-width: 980px) {
@@ -2029,5 +2035,29 @@ textarea:focus {
 @media (max-width: 979px) {
   .call-card.has-brgy .call-actions { flex-wrap: wrap; }
   .call-card.has-brgy .call-btn { flex: 1 1 9rem; min-width: 0; text-align: center; }
-  .shell:has(.call-card.has-brgy) .main-col { padding-bottom: 12rem; }
+  .main-col { padding-bottom: 12rem; }
 }
+
+/* Small phones with big text: the call bar gets tall, so leave more room under the page. */
+@media (max-width: 480px) {
+  .main-col { padding-bottom: 16rem; }
+}
+
+/* Narrow screens + large text: let the QR poster and dashboard tiles shrink instead of overflowing */
+.poster { max-width: 100%; overflow-wrap: anywhere; }
+.poster-brand { flex-wrap: wrap; justify-content: center; max-width: 100%; font-size: clamp(1.4rem, 7vw, 2.2rem); }
+.poster-brand span { min-width: 0; }
+.poster-qr svg { max-width: 100%; height: auto; }
+.warn code, .poster-url { overflow-wrap: anywhere; word-break: break-word; }
+.tiles > *, .tiles li, .tile { min-width: 0; }
+.chart, figure.chart { max-width: 100%; }
+@media (max-width: 400px) {
+  .tiles { gap: 0.6rem; }
+  .tile { padding-left: 0.8rem; padding-right: 0.8rem; }
+}
+
+.tiles { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.tile { overflow-wrap: anywhere; }
+
+.charts { grid-template-columns: minmax(0, 1fr); }
+@media (min-width: 760px) { .charts { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
